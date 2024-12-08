@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:cyber_surakshit/widgets/scanning_animation.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,10 +15,13 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(),
-                const SizedBox(height: 24),
-                _buildSecurityStatus(),
-                const SizedBox(height: 24),
-                _buildSecurityTools(),
+                const SizedBox(height: 30),
+                const ScanningAnimation(
+                  size: 200,
+                  color: Color(0xFF6C63FF),
+                ),
+                const SizedBox(height: 30),
+                _buildSecurityTools(context),
               ],
             ),
           ),
@@ -34,16 +37,16 @@ class HomeScreen extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'CyberSurakshit',
-              style: GoogleFonts.poppins(
+              style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
+            const Text(
               'Your Digital Guardian',
-              style: GoogleFonts.poppins(
+              style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
@@ -69,74 +72,66 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSecurityStatus() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF6C63FF), Color(0xFF4CAF50)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.shield_outlined, color: Colors.white, size: 40),
-          const SizedBox(height: 16),
-          Text(
-            'Your device is protected',
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'All security features are active',
-            style: GoogleFonts.poppins(
-              color: Colors.white.withOpacity(0.9),
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildSecurityTools(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth - 48) / 2; // Account for padding and spacing
+    
+    final tools = [
+      {
+        'icon': Icons.lock_outline,
+        'title': 'App Lock',
+        'subtitle': 'Secure apps',
+        'color': const Color(0xFF6C63FF),
+      },
+      {
+        'icon': Icons.wifi_tethering,
+        'title': 'Network Security',
+        'subtitle': 'Check network',
+        'color': const Color(0xFF4CAF50),
+      },
+      {
+        'icon': Icons.security,
+        'title': 'Privacy Check',
+        'subtitle': 'App permissions',
+        'color': const Color(0xFFFFA726),
+      },
+      {
+        'icon': Icons.shield_outlined,
+        'title': 'Malware Scan',
+        'subtitle': 'Scan device',
+        'color': const Color(0xFFE53935),
+      },
+    ];
 
-  Widget _buildSecurityTools() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Security Tools',
-          style: GoogleFonts.poppins(
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 16),
-        _buildToolCard(
-          icon: Icons.lock_outline,
-          title: 'App Lock',
-          subtitle: 'Secure your sensitive apps',
-          color: const Color(0xFF6C63FF),
-        ),
-        const SizedBox(height: 12),
-        _buildToolCard(
-          icon: Icons.wifi_tethering,
-          title: 'Network Security',
-          subtitle: 'Check network vulnerabilities',
-          color: const Color(0xFF4CAF50),
-        ),
-        const SizedBox(height: 12),
-        _buildToolCard(
-          icon: Icons.security,
-          title: 'Privacy Check',
-          subtitle: 'Review app permissions',
-          color: const Color(0xFFFFA726),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1.0,
+          ),
+          itemCount: tools.length,
+          itemBuilder: (context, index) {
+            return _buildToolCard(
+              icon: tools[index]['icon'] as IconData,
+              title: tools[index]['title'] as String,
+              subtitle: tools[index]['subtitle'] as String,
+              color: tools[index]['color'] as Color,
+            );
+          },
         ),
       ],
     );
@@ -149,7 +144,7 @@ class HomeScreen extends StatelessWidget {
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -161,7 +156,9 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(12),
@@ -169,31 +166,30 @@ class HomeScreen extends StatelessWidget {
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: color),
+            child: Icon(icon, color: color, size: 28),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
             ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          const Icon(Icons.arrow_forward_ios, size: 16),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );
