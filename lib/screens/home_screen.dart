@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cyber_surakshit/screens/app_scanner_screen.dart';
 import 'package:cyber_surakshit/widgets/scanning_animation.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -36,15 +37,15 @@ class HomeScreen extends StatelessWidget {
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
+          children: const [
+            Text(
               'CyberSurakshit',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Text(
+            Text(
               'Your Digital Guardian',
               style: TextStyle(
                 fontSize: 16,
@@ -66,7 +67,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ],
           ),
-          child: const Icon(Icons.security, color: Color(0xFF6C63FF), size: 28),
+          child: const Icon(Icons.security, color: Color(0xFF6C63FF)),
         ),
       ],
     );
@@ -143,54 +144,68 @@ class HomeScreen extends StatelessWidget {
     required String subtitle,
     required Color color,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
+    return Builder(
+      builder: (BuildContext context) => InkWell(
+        onTap: () {
+          if (title == 'App Scanner') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AppScannerScreen(),
+              ),
+            );
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 5,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: color, size: 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 28),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+        ),
       ),
     );
   }
