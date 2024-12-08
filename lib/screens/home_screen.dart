@@ -74,32 +74,32 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildSecurityTools(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = (screenWidth - 48) / 2; // Account for padding and spacing
+    final cardWidth = (screenWidth - 48) / 2;
     
     final tools = [
       {
-        'icon': Icons.lock_outline,
-        'title': 'App Lock',
-        'subtitle': 'Secure apps',
+        'icon': Icons.app_settings_alt,
+        'title': 'App Scanner',
+        'subtitle': 'Scan installed apps',
         'color': const Color(0xFF6C63FF),
       },
       {
-        'icon': Icons.wifi_tethering,
-        'title': 'Network Security',
-        'subtitle': 'Check network',
+        'icon': Icons.folder_open,
+        'title': 'Files Scanner',
+        'subtitle': 'Scan files & docs',
         'color': const Color(0xFF4CAF50),
       },
       {
-        'icon': Icons.security,
-        'title': 'Privacy Check',
-        'subtitle': 'App permissions',
-        'color': const Color(0xFFFFA726),
+        'icon': Icons.security_update_warning,
+        'title': 'Malware Scanner',
+        'subtitle': 'Detect threats',
+        'color': const Color(0xFFE53935),
       },
       {
-        'icon': Icons.shield_outlined,
-        'title': 'Malware Scan',
-        'subtitle': 'Scan device',
-        'color': const Color(0xFFE53935),
+        'icon': Icons.privacy_tip,
+        'title': 'Privacy Check',
+        'subtitle': 'Check permissions',
+        'color': const Color(0xFFFFA726),
       },
     ];
 
