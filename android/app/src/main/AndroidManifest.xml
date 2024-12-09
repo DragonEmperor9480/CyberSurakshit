@@ -3,9 +3,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="CyberSurakshit"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:label="CyberSurakshit"
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
