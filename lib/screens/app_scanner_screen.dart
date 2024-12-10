@@ -292,7 +292,7 @@ class _AppScannerScreenState extends State<AppScannerScreen> with SingleTickerPr
         ),
         const SizedBox(width: 4),
         Text(
-          isOnPlayStore ? 'On Play Store' : 'Not on Play Store',
+          isOnPlayStore ? 'Verified App' : 'Potentially Malicious',
           style: TextStyle(
             fontSize: 12,
             color: isOnPlayStore ? Colors.green : Colors.red,
