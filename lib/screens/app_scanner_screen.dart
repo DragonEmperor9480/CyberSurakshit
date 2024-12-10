@@ -66,42 +66,149 @@ class _AppScannerScreenState extends State<AppScannerScreen> with SingleTickerPr
 
   Widget _buildAppCard(AppScanResult app) {
     return Card(
-      elevation: 2,
+      elevation: 3,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            _buildAppIcon(app.icon),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              app.isOnPlayStore ? Colors.green.withOpacity(0.05) : Colors.red.withOpacity(0.05),
+              Colors.white,
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Text(
-                    app.appName,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          app.appName,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          app.packageName,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    app.packageName,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: app.isOnPlayStore 
+                          ? Colors.green.withOpacity(0.1) 
+                          : Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          app.isOnPlayStore ? Icons.verified_user : Icons.warning,
+                          color: app.isOnPlayStore ? Colors.green : Colors.red,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          app.isOnPlayStore ? 'Safe' : 'Risk',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: app.isOnPlayStore ? Colors.green : Colors.red,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  _buildPlayStoreStatus(app.isOnPlayStore),
                 ],
               ),
-            ),
-          ],
+              if (!app.isOnPlayStore) ...[
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.red.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              color: Colors.red[700],
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'This app is not verified on Play Store',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.red[700],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                try {
+                                  await InstalledApps.openSettings(app.packageName);
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Could not open app settings: $e')),
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.delete_outline, size: 18),
+                              label: const Text('Uninstall'),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.red,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -233,73 +340,6 @@ class _AppScannerScreenState extends State<AppScannerScreen> with SingleTickerPr
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildAppIcon(Uint8List? iconData) {
-    if (iconData == null || iconData.isEmpty) {
-      return Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Icon(Icons.android, color: Colors.grey),
-      );
-    }
-
-    try {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.memory(
-          iconData,
-          width: 48,
-          height: 48,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.android, color: Colors.grey),
-            );
-          },
-        ),
-      );
-    } catch (e) {
-      debugPrint('Failed to decode image: $e');
-      return Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Icon(Icons.android, color: Colors.grey),
-      );
-    }
-  }
-
-  Widget _buildPlayStoreStatus(bool isOnPlayStore) {
-    return Row(
-      children: [
-        Icon(
-          isOnPlayStore ? Icons.check_circle : Icons.warning,
-          color: isOnPlayStore ? Colors.green : Colors.red,
-          size: 16,
-        ),
-        const SizedBox(width: 4),
-        Text(
-          isOnPlayStore ? 'Verified App' : 'Potentially Malicious',
-          style: TextStyle(
-            fontSize: 12,
-            color: isOnPlayStore ? Colors.green : Colors.red,
-          ),
-        ),
-      ],
     );
   }
 
