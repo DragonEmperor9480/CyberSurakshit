@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_scanner_screen.dart';
 import 'privacy_checker_screen.dart';
+import 'network_security_screen.dart';
 import 'dart:math' as math;
 
 class HomeScreen extends StatefulWidget {
@@ -249,7 +250,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 subtitle: 'Check connection',
                 icon: Icons.wifi_protected_setup,
                 color: Colors.green,
-                onTap: () {},
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NetworkSecurityScreen()),
+                ),
               ),
             ],
           ),
