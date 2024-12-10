@@ -1,50 +1,74 @@
+import 'package:flutter/services.dart';
 import 'package:installed_apps/installed_apps.dart';
-import 'package:installed_apps/app_info.dart';
 import '../models/app_permission_info.dart';
 
 class PermissionCheckerService {
-  static const List<String> sensitivePermissions = [
-    'android.permission.ACCESS_FINE_LOCATION',
-    'android.permission.ACCESS_COARSE_LOCATION',
-    'android.permission.CAMERA',
-    'android.permission.READ_CONTACTS',
-    'android.permission.READ_EXTERNAL_STORAGE',
-    'android.permission.WRITE_EXTERNAL_STORAGE',
-    'android.permission.READ_SMS',
-    'android.permission.SEND_SMS',
-    'android.permission.READ_CALL_LOG',
-    'android.permission.RECORD_AUDIO',
-    'android.permission.READ_PHONE_STATE',
-  ];
+  static const platform = MethodChannel('com.cybersurakshit.app/permissions');
 
   static Future<List<AppPermissionInfo>> checkAppPermissions() async {
-    List<AppPermissionInfo> permissionInfoList = [];
+    List<AppPermissionInfo> appPermissions = [];
     
     try {
-      List<AppInfo> apps = await InstalledApps.getInstalledApps();
+      final apps = await InstalledApps.getInstalledApps();
+      
+      for (var app in apps) {
+        try {
+          final List<dynamic> permissions = await platform.invokeMethod(
+            'getAppPermissions',
+            {'packageName': app.packageName},
+          );
 
-      for (AppInfo app in apps) {
-        List<String> permissions = [];
-        
-        permissionInfoList.add(
-          AppPermissionInfo(
-            appName: app.name ?? 'Unknown',
-            packageName: app.packageName,
-            permissions: permissions,
-            isSystemApp: false,
-          ),
-        );
+          appPermissions.add(
+            AppPermissionInfo(
+              appName: app.name ?? 'Unknown',
+              packageName: app.packageName,
+              icon: app.icon,
+              permissions: _formatPermissions(
+                permissions.map((p) => p.toString()).toList(),
+              ),
+            ),
+          );
+        } catch (e) {
+          print('Error getting permissions for ${app.packageName}: $e');
+        }
       }
     } catch (e) {
       print('Error checking permissions: $e');
     }
-
-    return permissionInfoList;
+    
+    return appPermissions;
   }
 
-  static List<String> getSensitivePermissions(List<String> permissions) {
-    return permissions.where((permission) => 
-      sensitivePermissions.contains(permission)
-    ).toList();
+  static List<String> _formatPermissions(List<String> permissions) {
+    return permissions.map((permission) {
+      final parts = permission.split('.');
+      if (parts.isNotEmpty) {
+        String readable = parts.last
+            .replaceAll('_', ' ')
+            .toLowerCase()
+            .split(' ')
+            .map((word) => word.length > 0 
+                ? '${word[0].toUpperCase()}${word.substring(1)}' 
+                : '')
+            .join(' ');
+        return readable;
+      }
+      return permission;
+    }).toList();
+  }
+
+  static String getPermissionDescription(String permission) {
+    final descriptions = {
+      'Camera': 'Access device camera to take photos and videos',
+      'Location': 'Access device location',
+      'Microphone': 'Record audio using device microphone',
+      'Storage': 'Access files on device storage',
+      'Contacts': 'Access your contacts',
+      'Phone': 'Make and manage phone calls',
+      'Sms': 'Send and view SMS messages',
+      'Calendar': 'Access calendar events',
+    };
+
+    return descriptions[permission] ?? 'Access to $permission';
   }
 } 
