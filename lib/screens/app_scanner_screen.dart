@@ -3,6 +3,7 @@ import '../services/app_scanner_service.dart';
 import '../models/app_scan_result.dart';
 import 'dart:typed_data';
 import 'dart:math' as math;
+import 'package:installed_apps/installed_apps.dart';
 
 class AppScannerScreen extends StatefulWidget {
   const AppScannerScreen({Key? key}) : super(key: key);
