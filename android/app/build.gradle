@@ -47,7 +47,7 @@ android {
 
     defaultConfig {
         applicationId "com.cybersurakshit.app"
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

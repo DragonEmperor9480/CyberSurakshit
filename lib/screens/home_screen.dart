@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'app_scanner_screen.dart';
 import 'privacy_checker_screen.dart';
 import 'network_security_screen.dart';
+import 'phone_doctor_screen.dart';
 import 'dart:math' as math;
 
 class HomeScreen extends StatefulWidget {
@@ -239,13 +240,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ),
               _buildFeatureCard(
-                title: 'Real-time Guard',
-                subtitle: 'Active protection',
-                icon: Icons.shield_moon,
-                color: Colors.orange,
-                onTap: () {},
-              ),
-              _buildFeatureCard(
                 title: 'Network Security',
                 subtitle: 'Check connection',
                 icon: Icons.wifi_protected_setup,
@@ -253,6 +247,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const NetworkSecurityScreen()),
+                ),
+              ),
+              _buildFeatureCard(
+                title: 'Phone Doctor',
+                subtitle: 'Check components',
+                icon: Icons.phonelink_setup,
+                color: Colors.orange,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PhoneDoctorScreen()),
                 ),
               ),
             ],
