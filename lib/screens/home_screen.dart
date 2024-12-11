@@ -407,106 +407,95 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     required Color color,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.mediumImpact();
-        onTap();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withOpacity(0.2),
-            width: 1,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: color.withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            // Background animation
-            Positioned.fill(
-              child: CustomPaint(
-                painter: FeatureCardPainter(
-                  color: color,
-                  animation: _backgroundController.value,
+          child: Stack(
+            children: [
+              // Background animation
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: FeatureCardPainter(
+                    color: color,
+                    animation: _backgroundController.value,
+                  ),
                 ),
               ),
-            ),
-            // Content
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Icon with animation
-                  TweenAnimationBuilder<double>(
-                    duration: const Duration(seconds: 2),
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    builder: (context, value, child) {
-                      return Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: color.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: color.withOpacity(0.2),
-                              blurRadius: 8,
-                              spreadRadius: value * 2,
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          icon,
-                          color: color,
-                          size: 28,
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  // Title
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              // Content
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Icon with animation
+                    TweenAnimationBuilder<double>(
+                      duration: const Duration(seconds: 2),
+                      tween: Tween(begin: 0.0, end: 1.0),
+                      builder: (context, value, child) {
+                        return Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: color.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: color.withOpacity(0.2),
+                                blurRadius: 8,
+                                spreadRadius: value * 2,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            icon,
+                            color: color,
+                            size: 28,
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  // Subtitle
-                  Text(
-                    subtitle,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
+                    const SizedBox(height: 12),
+                    // Title
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            // Hover effect
-            Positioned.fill(
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  splashColor: color.withOpacity(0.1),
-                  highlightColor: color.withOpacity(0.05),
-                  onTap: () {},
+                    const SizedBox(height: 4),
+                    // Subtitle
+                    Text(
+                      subtitle,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
