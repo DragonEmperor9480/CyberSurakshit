@@ -18,6 +18,29 @@ class _AppScannerScreenState extends State<AppScannerScreen> with SingleTickerPr
   double _scanProgress = 0.0;
   late AnimationController _loadingController;
 
+  // Add this list of system package prefixes to identify system apps
+  final List<String> systemPackagePrefixes = [
+    'com.android.',
+    'com.google.android.',
+    'com.samsung.',
+    'com.sec.',
+    'com.xiaomi.',
+    'com.miui.',
+    'miui.',
+    'com.mi.',
+    'com.huawei.',
+    'com.oppo.',
+    'com.vivo.',
+    'com.oneplus.',
+    'android.',
+    'com.qualcomm.',
+    'com.mediatek.',
+  ];
+
+  bool isSystemApp(String packageName) {
+    return systemPackagePrefixes.any((prefix) => packageName.startsWith(prefix));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -65,6 +88,74 @@ class _AppScannerScreenState extends State<AppScannerScreen> with SingleTickerPr
   }
 
   Widget _buildAppCard(AppScanResult app) {
+    Color getStatusColor() {
+      switch (app.riskLevel) {
+        case RiskLevel.safe:
+          return Colors.blue;
+        case RiskLevel.low:
+          return Colors.green;
+        case RiskLevel.medium:
+          return Colors.orange;
+        case RiskLevel.high:
+          return Colors.red;
+      }
+    }
+
+    String getStatusText() {
+      switch (app.riskLevel) {
+        case RiskLevel.safe:
+          return 'System App - Safe';
+        case RiskLevel.low:
+          return 'Safe';
+        case RiskLevel.medium:
+          return 'Medium Risk';
+        case RiskLevel.high:
+          return 'High Risk';
+      }
+    }
+
+    Widget buildAppIcon() {
+      if (app.icon != null) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.memory(
+            app.icon!,
+            width: 40,
+            height: 40,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: getStatusColor().withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.android,
+                  color: getStatusColor(),
+                  size: 24,
+                ),
+              );
+            },
+          ),
+        );
+      }
+      
+      return Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: getStatusColor().withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          Icons.android,
+          color: getStatusColor(),
+          size: 24,
+        ),
+      );
+    }
+
     return Card(
       elevation: 3,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -78,136 +169,29 @@ class _AppScannerScreenState extends State<AppScannerScreen> with SingleTickerPr
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              app.isOnPlayStore ? Colors.green.withOpacity(0.05) : Colors.red.withOpacity(0.05),
+              getStatusColor().withOpacity(0.05),
               Colors.white,
             ],
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          app.appName,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          app.packageName,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: app.isOnPlayStore 
-                          ? Colors.green.withOpacity(0.1) 
-                          : Colors.red.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          app.isOnPlayStore ? Icons.verified_user : Icons.warning,
-                          color: app.isOnPlayStore ? Colors.green : Colors.red,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          app.isOnPlayStore ? 'Safe' : 'Risk',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: app.isOnPlayStore ? Colors.green : Colors.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              if (!app.isOnPlayStore) ...[
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.red.withOpacity(0.2),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: Colors.red[700],
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'This app is not verified on Play Store',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.red[700],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                try {
-                                  await InstalledApps.openSettings(app.packageName);
-                                } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Could not open app settings: $e')),
-                                  );
-                                }
-                              },
-                              icon: const Icon(Icons.delete_outline, size: 18),
-                              label: const Text('Uninstall'),
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.red,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ],
+        child: ListTile(
+          leading: buildAppIcon(),
+          title: Text(
+            app.name,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: Text(
+            getStatusText(),
+            style: TextStyle(
+              color: getStatusColor(),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          trailing: Icon(
+            Icons.verified_user,
+            color: getStatusColor(),
           ),
         ),
       ),
